@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -15,7 +14,6 @@ type Profile = Database['public']['Tables']['profiles']['Row']
 type PortfolioItem = Database['public']['Tables']['portfolio_items']['Row']
 
 export default function PortfolioPage() {
-  const router = useRouter()
   const { user } = useAuthStore()
   const { supabase } = useSupabase()
   
@@ -38,27 +36,31 @@ export default function PortfolioPage() {
     if (user) {
       loadProfiles()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user])
 
   useEffect(() => {
     if (selectedProfileId) {
       loadPortfolioItems()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedProfileId])
 
   const loadProfiles = async () => {
+    if (!user?.id) return
+    
     try {
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
-        .eq('user_id', user?.id)
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false })
 
       if (error) throw error
 
       setProfiles(data || [])
       if (data && data.length > 0) {
-        setSelectedProfileId(data[0].id)
+        setSelectedProfileId((data[0] as any).id)
       }
     } catch (error) {
       console.error('Error loading profiles:', error)
@@ -89,7 +91,7 @@ export default function PortfolioPage() {
     try {
       if (editingItem) {
         // Update existing item
-        const { error } = await supabase
+        const { error } = await (supabase as any)
           .from('portfolio_items')
           .update({
             title: formData.title,
@@ -103,7 +105,7 @@ export default function PortfolioPage() {
         if (error) throw error
       } else {
         // Create new item
-        const { error } = await supabase
+        const { error } = await (supabase as any)
           .from('portfolio_items')
           .insert({
             profile_id: selectedProfileId!,
@@ -436,4 +438,3 @@ export default function PortfolioPage() {
     </div>
   )
 }
-

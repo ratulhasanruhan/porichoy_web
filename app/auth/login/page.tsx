@@ -34,8 +34,9 @@ export default function LoginPage() {
       if (error) throw error
 
       router.push('/dashboard')
-    } catch (err: any) {
-      setError(err.message || 'Invalid email or password')
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Invalid email or password'
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }
@@ -57,8 +58,9 @@ export default function LoginPage() {
       if (error) throw error
 
       setMagicLinkSent(true)
-    } catch (err: any) {
-      setError(err.message || 'Failed to send magic link')
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to send magic link'
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }
@@ -76,8 +78,9 @@ export default function LoginPage() {
       })
 
       if (error) throw error
-    } catch (err: any) {
-      setError(err.message || 'Failed to login with Google')
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to login with Google'
+      setError(errorMessage)
       setLoading(false)
     }
   }

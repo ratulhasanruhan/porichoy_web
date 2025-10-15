@@ -44,7 +44,7 @@ const defaultResumeData: ProfileData = {
   contact: {},
 }
 
-export const useResumeStore = create<ResumeState>((set, get) => ({
+export const useResumeStore = create<ResumeState>((set) => ({
   profileId: null,
   resumeData: defaultResumeData,
   isDirty: false,
@@ -64,7 +64,7 @@ export const useResumeStore = create<ResumeState>((set, get) => ({
       const currentSection = state.resumeData[section]
       if (!Array.isArray(currentSection)) return state
 
-      const newItem = { ...item, id: item.id || generateId() }
+      const newItem = { ...(item as any), id: (item as any).id || generateId() }
       return {
         resumeData: {
           ...state.resumeData,
@@ -82,7 +82,7 @@ export const useResumeStore = create<ResumeState>((set, get) => ({
       return {
         resumeData: {
           ...state.resumeData,
-          [section]: currentSection.map((item: any) =>
+          [section]: currentSection.map((item: { id: string }) =>
             item.id === id ? { ...item, ...data } : item
           ),
         },
@@ -98,7 +98,7 @@ export const useResumeStore = create<ResumeState>((set, get) => ({
       return {
         resumeData: {
           ...state.resumeData,
-          [section]: currentSection.filter((item: any) => item.id !== id),
+          [section]: currentSection.filter((item: { id: string }) => item.id !== id),
         },
         isDirty: true,
       }

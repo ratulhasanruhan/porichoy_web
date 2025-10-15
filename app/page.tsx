@@ -21,14 +21,54 @@ import { useAuthStore } from "@/lib/store/useAuthStore";
 export default function HomePage() {
   const { user, profile } = useAuthStore();
   const [locale, setLocale] = useState("bn");
-  const [translations, setTranslations] = useState<Record<string, any> | null>(
-    null
-  );
+  const [translations, setTranslations] = useState<{
+    hero?: {
+      badge?: string;
+      title1?: string;
+      title2?: string;
+      title3?: string;
+      subtitle?: string;
+      startBuilding?: string;
+      viewTemplates?: string;
+      noCreditCard?: string;
+    };
+    features?: {
+      easyBuilder?: {
+        title?: string;
+        description?: string;
+      };
+      multilingual?: {
+        title?: string;
+        description?: string;
+      };
+      exportShare?: {
+        title?: string;
+        description?: string;
+      };
+    };
+    cta?: {
+      title?: string;
+      subtitle?: string;
+      button?: string;
+    };
+    footer?: {
+      description?: string;
+      product?: string;
+      company?: string;
+      templates?: string;
+      about?: string;
+      contact?: string;
+      privacy?: string;
+      terms?: string;
+      legal?: string;
+      copyright?: string;
+    };
+  } | null>(null);
 
   useEffect(() => {
     // Load translations
     const loadTranslations = async () => {
-      const lang = profile?.locale || localStorage.getItem("preferredLocale") || "bn";
+      const lang = profile?.locale || (typeof window !== 'undefined' ? localStorage.getItem("preferredLocale") : null) || "bn";
       setLocale(lang);
       try {
         const response = await fetch(`/locales/${lang}/home.json`);
@@ -36,6 +76,13 @@ export default function HomePage() {
         setTranslations(data);
       } catch (error) {
         console.error("Error loading translations:", error);
+        // Set fallback translations
+        setTranslations({
+          hero: { badge: "🇧🇩 Made for Bangladesh" },
+          features: {},
+          cta: {},
+          footer: {}
+        });
       }
     };
     loadTranslations();

@@ -5,11 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Mail, Phone, Globe, Linkedin, Github, Twitter, MapPin, Calendar, Download } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import type { Database, Experience, Education, Skill, Project, Language, Certification } from '@/types/database'
+import type { Experience, Education, Skill, Project, Language } from '@/types/database'
 import { formatDateRange } from '@/lib/utils'
 
-type UserProfile = Database['public']['Tables']['users']['Row']
-type Profile = Database['public']['Tables']['profiles']['Row']
+// Types are used in the component, removing unused type declarations
 
 interface Props {
   params: { username: string }
@@ -238,7 +237,7 @@ export default async function PublicProfilePage({ params }: Props) {
                   </p>
                   <p className="text-sm text-muted-foreground flex items-center gap-2 mt-1">
                     <Calendar className="h-3 w-3" />
-                    {formatDateRange(exp.startDate, exp.endDate, user.locale, isBangla ? 'বর্তমান' : 'Present')}
+                    {formatDateRange(exp.startDate, exp.endDate, user.locale || 'en', isBangla ? 'বর্তমান' : 'Present')}
                   </p>
                   {exp.description && (
                     <p className={`mt-2 text-muted-foreground ${isBangla ? 'font-bengali' : ''}`}>
@@ -270,7 +269,7 @@ export default async function PublicProfilePage({ params }: Props) {
                   </p>
                   <p className="text-sm text-muted-foreground flex items-center gap-2 mt-1">
                     <Calendar className="h-3 w-3" />
-                    {formatDateRange(edu.startDate, edu.endDate, user.locale)}
+                    {formatDateRange(edu.startDate, edu.endDate, user.locale || 'en')}
                   </p>
                   {edu.gpa && (
                     <p className="text-sm mt-1">

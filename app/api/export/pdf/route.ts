@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
     // Check if user has access (owner or public profile)
     const hasAccess =
       profile.is_public ||
-      (session && (profile as any).user_id === session.user.id)
+      (session && profile.user_id === session.user.id)
 
     if (!hasAccess) {
       return NextResponse.json(
@@ -66,7 +66,7 @@ export async function GET(request: NextRequest) {
       body: JSON.stringify({
         profileId: profile.id,
         profileData: profile.data,
-        user: (profile as any).users,
+        user: { name: profile.users?.name, email: profile.users?.email },
       }),
     })
 
@@ -88,7 +88,7 @@ export async function GET(request: NextRequest) {
     return new NextResponse(pdfBuffer, {
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename="resume-${(profile as any).users.username}.pdf"`,
+        'Content-Disposition': `attachment; filename="resume-${profile.users?.username || 'profile'}.pdf"`,
       },
     })
   } catch (error) {

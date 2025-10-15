@@ -97,9 +97,9 @@ export default function SignupPage() {
             username: formData.username,
             name: formData.fullName,
             email: formData.email,
-            locale: 'bn',
+            locale: 'bn' as const,
             is_public: true,
-          })
+          } as any)
 
         if (profileError) {
           console.error('Profile creation error:', profileError)
@@ -126,7 +126,7 @@ export default function SignupPage() {
                 email: formData.email,
               },
             },
-          })
+          } as any)
 
         if (resumeError) {
           console.error('Resume creation error:', resumeError)
@@ -134,8 +134,9 @@ export default function SignupPage() {
 
         router.push('/dashboard')
       }
-    } catch (err: any) {
-      setError(err.message || 'An error occurred during signup')
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred during signup'
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }
@@ -153,8 +154,9 @@ export default function SignupPage() {
       })
 
       if (error) throw error
-    } catch (err: any) {
-      setError(err.message || 'Failed to signup with Google')
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to signup with Google'
+      setError(errorMessage)
       setLoading(false)
     }
   }
@@ -329,4 +331,3 @@ export default function SignupPage() {
     </div>
   )
 }
-

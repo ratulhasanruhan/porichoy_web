@@ -23,6 +23,7 @@ export default function TemplatesPage() {
 
   useEffect(() => {
     loadTemplates()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const loadTemplates = async () => {
@@ -52,7 +53,7 @@ export default function TemplatesPage() {
       setCreatingWithTemplate(templateId)
 
       // Create a new resume with the selected template
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('profiles')
         .insert({
           user_id: user.id,
@@ -62,7 +63,6 @@ export default function TemplatesPage() {
           data: {
             personalInfo: {
               fullName: userProfile?.name || '',
-              email: user?.email || '',
             },
             experience: [],
             education: [],
@@ -87,7 +87,7 @@ export default function TemplatesPage() {
       }
 
       if (data) {
-        router.push(`/dashboard/edit/${data.id}`)
+        router.push(`/dashboard/edit/${(data as any).id}`)
       }
     } catch (error) {
       console.error('Error creating resume:', error)

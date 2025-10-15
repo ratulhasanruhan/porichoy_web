@@ -34,12 +34,15 @@ export function formatDate(date: string | Date, locale: string = 'en'): string {
  */
 export function formatDateRange(
   startDate: string,
-  endDate: string | null,
+  endDate: string | null | undefined,
   locale: string = 'en',
-  currentText: string = 'Present'
+  presentText: string = 'Present'
 ): string {
   const start = formatDate(startDate, locale)
-  const end = endDate ? formatDate(endDate, locale) : currentText
+  if (!endDate) {
+    return `${start} - ${presentText}`
+  }
+  const end = formatDate(endDate, locale)
   return `${start} - ${end}`
 }
 
@@ -92,7 +95,7 @@ export function formatNumber(num: number, locale: string = 'en'): string {
 /**
  * Debounce function
  */
-export function debounce<T extends (...args: any[]) => any>(
+export function debounce<T extends (...args: never[]) => unknown>(
   func: T,
   wait: number
 ): (...args: Parameters<T>) => void {
@@ -159,4 +162,3 @@ export async function downloadFile(url: string, filename: string): Promise<void>
     throw err
   }
 }
-

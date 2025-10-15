@@ -75,16 +75,20 @@ export function Navbar() {
   const handleLanguageChange = async (newLocale: "bn" | "en") => {
     if (!user) {
       // For non-logged in users, store preference in localStorage
-      localStorage.setItem("preferredLocale", newLocale);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem("preferredLocale", newLocale);
+      }
       setCurrentLocale(newLocale);
-      window.location.reload();
+      if (typeof window !== 'undefined') {
+        window.location.reload();
+      }
       return;
     }
 
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from("users")
-        .update({ locale: newLocale } as any)
+        .update({ locale: newLocale })
         .eq("id", user.id);
 
       if (error) {
@@ -99,7 +103,9 @@ export function Navbar() {
       setCurrentLocale(newLocale);
 
       // Reload to apply changes
-      window.location.reload();
+      if (typeof window !== 'undefined') {
+        window.location.reload();
+      }
     } catch (error) {
       console.error("Error changing language:", error);
     }

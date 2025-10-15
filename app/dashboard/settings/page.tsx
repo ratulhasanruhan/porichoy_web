@@ -94,7 +94,7 @@ export default function SettingsPage() {
       }
 
       // Update user profile
-      const { error: updateError } = await supabase
+      const { error: updateError } = await (supabase as any)
         .from('users')
         .update({
           name: formData.name,
@@ -108,7 +108,7 @@ export default function SettingsPage() {
       if (updateError) throw updateError
 
       // Update profiles visibility
-      const { error: profilesError } = await supabase
+      const { error: profilesError } = await (supabase as any)
         .from('profiles')
         .update({ is_public: formData.is_public })
         .eq('user_id', user?.id)
@@ -119,7 +119,7 @@ export default function SettingsPage() {
       const { data: updatedProfile } = await supabase
         .from('users')
         .select('*')
-        .eq('id', user?.id)
+        .eq('id', user?.id || '')
         .single()
 
       if (updatedProfile) {
@@ -127,8 +127,9 @@ export default function SettingsPage() {
       }
 
       setSuccess('Settings saved successfully!')
-    } catch (err: any) {
-      setError(err.message || 'Failed to save settings')
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to save settings'
+      setError(errorMessage)
     } finally {
       setSaving(false)
     }

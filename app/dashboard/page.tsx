@@ -12,7 +12,7 @@ import type { Database } from '@/types/database'
 import { formatDate, formatNumber } from '@/lib/utils'
 
 type Profile = Database['public']['Tables']['profiles']['Row']
-type ProfileInsert = Database['public']['Tables']['profiles']['Insert']
+// ProfileInsert type removed as it's not being used
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -99,28 +99,27 @@ export default function DashboardPage() {
     try {
       setCreating(true)
 
-      // Create a new resume with properly typed data
-      const newResume: ProfileInsert = {
-        user_id: user.id,
-        title: `Resume ${profiles.length + 1}`,
-        summary: '',
-        data: {
-          personalInfo: {
-            fullName: userProfile?.name || '',
-            email: user?.email || '',
-          },
-          experience: [],
-          education: [],
-          skills: [],
-          projects: [],
-          certifications: [],
-          languages: [],
-          contact: {
-            email: user?.email || '',
-          },
-        },
-        is_public: false,
-      }
+       // Create a new resume with properly typed data
+       const newResume: any = {
+         user_id: user.id,
+         title: `Resume ${profiles.length + 1}`,
+         summary: '',
+         data: {
+           personalInfo: {
+             fullName: userProfile?.name || '',
+           },
+           experience: [],
+           education: [],
+           skills: [],
+           projects: [],
+           certifications: [],
+           languages: [],
+           contact: {
+             email: user?.email || '',
+           },
+         },
+         is_public: false,
+       }
 
       const { data, error } = await supabase
         .from('profiles')
@@ -137,14 +136,15 @@ export default function DashboardPage() {
 
       if (data) {
         // Redirect to the edit page for the new resume
-        router.push(`/dashboard/edit/${data.id}`)
+        router.push(`/dashboard/edit/${(data as any).id}`)
       } else {
         alert('Failed to create resume. Please try again.')
         setCreating(false)
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error creating resume:', error)
-      alert(`Failed to create resume: ${error?.message || 'Unknown error'}. Please try again.`)
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      alert(`Failed to create resume: ${errorMessage}. Please try again.`)
       setCreating(false)
     }
   }

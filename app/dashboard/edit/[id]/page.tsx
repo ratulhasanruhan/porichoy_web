@@ -9,8 +9,8 @@ import { Label } from '@/components/ui/label'
 import { useAuthStore } from '@/lib/store/useAuthStore'
 import { useSupabase } from '@/components/providers/SupabaseProvider'
 import { useResumeStore } from '@/lib/store/useResumeStore'
-import { Save, Eye, Download, Loader2, Plus, Trash2, GripVertical } from 'lucide-react'
-import type { Database, Experience, Education, Skill, Project } from '@/types/database'
+import { Save, Loader2, Plus, Trash2, GripVertical } from 'lucide-react'
+import type { Database, Experience, Skill } from '@/types/database'
 import { generateId } from '@/lib/utils'
 
 type Profile = Database['public']['Tables']['profiles']['Row']
@@ -31,22 +31,28 @@ export default function EditResumePage() {
     if (user && params.id) {
       loadProfile()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, params.id])
 
   const loadProfile = async () => {
+    if (!user?.id) {
+      router.push('/dashboard')
+      return
+    }
+
     try {
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', params.id as string)
-        .eq('user_id', user?.id)
+        .eq('user_id', user.id)
         .single()
 
       if (error) throw error
 
       if (data) {
         setProfile(data)
-        setResumeData(data.data)
+        setResumeData((data as any).data || {})
       }
     } catch (error) {
       console.error('Error loading profile:', error)
@@ -60,7 +66,7 @@ export default function EditResumePage() {
     setSaving(true)
 
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('profiles')
         .update({
           data: resumeData,
@@ -211,7 +217,7 @@ export default function EditResumePage() {
                         })
                       }
                       placeholder="সফটওয়্যার ডেভেলপার"
-                      className="font-bengali"
+                      className="font-bengালি"
                     />
                   </div>
                 </div>
@@ -578,4 +584,3 @@ export default function EditResumePage() {
     </div>
   )
 }
-
