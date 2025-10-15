@@ -1,0 +1,47 @@
+{
+  "hero": {
+    "badge": "🇧🇩 Made for Bangladesh",
+    "title1": "Create Your",
+    "title2": "Professional",
+    "title3": "Resume",
+    "subtitle": "Build Your Professional Identity | Build, Customize & Share Your Career Story",
+    "startBuilding": "Start Building Free",
+    "viewTemplates": "View Templates",
+    "noCreditCard": "No credit card required • Free forever • Bangla & English Support"
+  },
+  "features": {
+    "easyBuilder": {
+      "title": "Easy Resume Builder",
+      "description": "Create professional resumes with our intuitive drag-and-drop editor. No design skills needed."
+    },
+    "multilingual": {
+      "title": "বাংলা & English",
+      "description": "Full support for both Bangla and English. Create resumes in your preferred language."
+    },
+    "exportShare": {
+      "title": "Export & Share",
+      "description": "Download as PDF or share your unique portfolio link. Get your own porichoy.me/username."
+    }
+  },
+  "cta": {
+    "title": "Ready to Build Your Resume?",
+    "subtitle": "Start today - Completely free",
+    "button": "Create Free Account"
+  },
+  "footer": {
+    "description": "Professional resume builder for Bangladeshi people.",
+    "product": "Product",
+    "company": "Company",
+    "legal": "Legal",
+    "templates": "Templates",
+    "features": "Features",
+    "pricing": "Pricing",
+    "about": "About",
+    "contact": "Contact",
+    "blog": "Blog",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "copyright": "All rights reserved."
+  }
+}
+
