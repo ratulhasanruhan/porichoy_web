@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Mail, Phone, Globe, Linkedin, Github, Twitter, MapPin, Calendar, Download } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import type { Database } from '@/types/database'
+import type { Database, Experience, Education, Skill, Project, Language, Certification } from '@/types/database'
 import { formatDateRange } from '@/lib/utils'
 
 type UserProfile = Database['public']['Tables']['users']['Row']
@@ -228,7 +228,7 @@ export default async function PublicProfilePage({ params }: Props) {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              {data.experience.map((exp) => (
+              {data.experience.map((exp: Experience) => (
                 <div key={exp.id} className="border-l-2 border-primary pl-4">
                   <h3 className={`font-semibold text-lg ${isBangla ? 'font-bengali' : ''}`}>
                     {isBangla && exp.positionBn ? exp.positionBn : exp.position}
@@ -260,7 +260,7 @@ export default async function PublicProfilePage({ params }: Props) {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              {data.education.map((edu) => (
+              {data.education.map((edu: Education) => (
                 <div key={edu.id} className="border-l-2 border-primary pl-4">
                   <h3 className={`font-semibold text-lg ${isBangla ? 'font-bengali' : ''}`}>
                     {isBangla && edu.degreeBn ? edu.degreeBn : edu.degree}
@@ -293,7 +293,7 @@ export default async function PublicProfilePage({ params }: Props) {
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-2">
-                {data.skills.map((skill) => (
+                {data.skills.map((skill: Skill) => (
                   <span
                     key={skill.id}
                     className={`px-3 py-1 bg-primary/10 text-primary rounded-full text-sm ${
@@ -325,7 +325,7 @@ export default async function PublicProfilePage({ params }: Props) {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {data.projects.map((project) => (
+              {data.projects.map((project: Project) => (
                 <div key={project.id} className="border rounded-lg p-4">
                   <h3 className={`font-semibold text-lg ${isBangla ? 'font-bengali' : ''}`}>
                     {isBangla && project.nameBn ? project.nameBn : project.name}
@@ -389,7 +389,7 @@ export default async function PublicProfilePage({ params }: Props) {
             </CardHeader>
             <CardContent>
               <div className="grid md:grid-cols-2 gap-4">
-                {data.languages.map((lang) => (
+                {data.languages.map((lang: Language) => (
                   <div key={lang.id} className="flex items-center justify-between">
                     <span className={isBangla ? 'font-bengali' : ''}>
                       {isBangla && lang.nameBn ? lang.nameBn : lang.name}
@@ -417,4 +417,3 @@ export default async function PublicProfilePage({ params }: Props) {
     </div>
   )
 }
-
