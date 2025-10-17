@@ -1,20 +1,35 @@
 {
   "title": "Dashboard",
+  "welcome": "Welcome back",
+  "createNewResume": "Create New Resume",
+  "creating": "Creating...",
   "myResumes": "My Resumes",
-  "createNew": "Create New Resume",
-  "editResume": "Edit Resume",
-  "deleteResume": "Delete Resume",
-  "viewPublicProfile": "View Public Profile",
-  "statistics": "Statistics",
-  "totalViews": "Total Views",
-  "totalDownloads": "Total Downloads",
-  "profileVisits": "Profile Visits",
-  "lastUpdated": "Last Updated",
-  "noResumes": "No Resumes Found",
-  "noResumesDescription": "Get started by creating your first professional resume",
-  "resumeCreated": "Resume Created",
-  "resumeUpdated": "Resume Updated",
-  "resumeDeleted": "Resume Deleted",
-  "confirmDelete": "Are you sure you want to delete this resume?"
+  "noResumesYet": "No Resumes Yet",
+  "noResumesDescription": "Get started by creating your first professional resume. It only takes a few minutes!",
+  "createFirstResume": "Create Your First Resume",
+  "stats": {
+    "totalResumes": "Total Resumes",
+    "totalViews": "Total Profile Views",
+    "yourProfile": "Your Profile"
+  },
+  "resume": {
+    "untitled": "Untitled Resume",
+    "noSummary": "No summary",
+    "public": "Public",
+    "private": "Private",
+    "views": "Views",
+    "lastUpdated": "Last Updated",
+    "edit": "Edit",
+    "viewProfile": "View Public Profile",
+    "setUsername": "Set Username"
+  },
+  "actions": {
+    "delete": "Delete",
+    "deleteConfirm": "Are you sure you want to delete this resume? This action cannot be undone.",
+    "deleteError": "Failed to delete resume. Please try again."
+  },
+  "errors": {
+    "loadError": "Failed to load resumes. Please refresh the page.",
+    "createError": "Failed to create resume. Please try again."
+  }
 }
-

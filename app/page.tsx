@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -17,78 +17,12 @@ import {
 } from "lucide-react";
 import { Navbar } from "@/components/navigation/Navbar";
 import { useAuthStore } from "@/lib/store/useAuthStore";
+import { useTranslations } from "@/lib/hooks/useTranslations";
+import Image from "next/image";
 
 export default function HomePage() {
-  const { user, profile } = useAuthStore();
-  const [locale, setLocale] = useState("bn");
-  const [translations, setTranslations] = useState<{
-    hero?: {
-      badge?: string;
-      title1?: string;
-      title2?: string;
-      title3?: string;
-      subtitle?: string;
-      startBuilding?: string;
-      viewTemplates?: string;
-      noCreditCard?: string;
-    };
-    features?: {
-      easyBuilder?: {
-        title?: string;
-        description?: string;
-      };
-      multilingual?: {
-        title?: string;
-        description?: string;
-      };
-      exportShare?: {
-        title?: string;
-        description?: string;
-      };
-    };
-    cta?: {
-      title?: string;
-      subtitle?: string;
-      button?: string;
-    };
-    footer?: {
-      description?: string;
-      product?: string;
-      company?: string;
-      templates?: string;
-      about?: string;
-      contact?: string;
-      privacy?: string;
-      terms?: string;
-      legal?: string;
-      copyright?: string;
-    };
-  } | null>(null);
-
-  useEffect(() => {
-    // Load translations
-    const loadTranslations = async () => {
-      const lang = profile?.locale || (typeof window !== 'undefined' ? localStorage.getItem("preferredLocale") : null) || "bn";
-      setLocale(lang);
-      try {
-        const response = await fetch(`/locales/${lang}/home.json`);
-        const data = await response.json();
-        setTranslations(data);
-      } catch (error) {
-        console.error("Error loading translations:", error);
-        // Set fallback translations
-        setTranslations({
-          hero: { badge: "🇧🇩 Made for Bangladesh" },
-          features: {},
-          cta: {},
-          footer: {}
-        });
-      }
-    };
-    loadTranslations();
-  }, [profile]);
-
-  const t = translations || {};
+  const { user } = useAuthStore();
+  const { t, locale } = useTranslations({ namespace: 'home' });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
@@ -99,7 +33,7 @@ export default function HomePage() {
       <section className="container mx-auto px-4 py-20 lg:py-32">
         <div className="max-w-4xl mx-auto text-center space-y-8">
           <div className="inline-block px-4 py-2 bg-primary/10 rounded-full text-sm font-medium text-primary mb-4 animate-pulse">
-            {t.hero?.badge || "🇧🇩 Made for Bangladesh"}
+            {t('hero.badge', '🇧🇩 Made for Bangladesh')}
           </div>
 
           <h1
@@ -107,9 +41,9 @@ export default function HomePage() {
               locale === "bn" ? "font-bengali" : ""
             }`}
           >
-            {t.hero?.title1 || "Create Your"}
-            <span className="text-primary"> {t.hero?.title2 || "Professional"} </span>
-            {t.hero?.title3 || "Resume"}
+            {t('hero.title1', 'Create Your')}
+            <span className="text-primary"> {t('hero.title2', 'Professional')} </span>
+            {t('hero.title3', 'Resume')}
           </h1>
 
           <p
@@ -117,8 +51,7 @@ export default function HomePage() {
               locale === "bn" ? "font-bengali" : ""
             }`}
           >
-            {t.hero?.subtitle ||
-              "আপনার পেশাদার পরিচয় তৈরি করুন | Build, Customize & Share Your Career Story"}
+            {t('hero.subtitle', 'Build, Customize & Share Your Career Story')}
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
@@ -130,7 +63,7 @@ export default function HomePage() {
                     className="text-lg px-8 shadow-lg hover:shadow-xl transition-all"
                   >
                     <Sparkles className="mr-2 h-5 w-5" />
-                    {t.hero?.startBuilding || "Start Building Free"}
+                    {t('hero.startBuilding', 'Start Building Free')}
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
@@ -141,7 +74,7 @@ export default function HomePage() {
                     className="text-lg px-8"
                   >
                     <Eye className="mr-2 h-5 w-5" />
-                    {t.hero?.viewTemplates || "View Templates"}
+                    {t('hero.viewTemplates', 'View Templates')}
                   </Button>
                 </Link>
               </>
@@ -152,7 +85,7 @@ export default function HomePage() {
                     size="lg"
                     className="text-lg px-8 shadow-lg hover:shadow-xl transition-all"
                   >
-                    {locale === "bn" ? "ড্যাশবোর্ডে যান" : "Go to Dashboard"}
+                    {t('navigation.dashboard', 'Go to Dashboard')}
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
@@ -163,7 +96,7 @@ export default function HomePage() {
                     className="text-lg px-8"
                   >
                     <FileText className="mr-2 h-5 w-5" />
-                    {locale === "bn" ? "রিজিউম তৈরি করুন" : "Create Resume"}
+                    {t('navigation.createResume', 'Create Resume')}
                   </Button>
                 </Link>
               </>
@@ -171,8 +104,7 @@ export default function HomePage() {
           </div>
 
           <p className="text-sm text-muted-foreground">
-            {t.hero?.noCreditCard ||
-              "✓ No credit card required • ✓ Free forever • ✓ Bangla & English Support"}
+            {t('hero.noCreditCard', '✓ No credit card required • ✓ Free forever • ✓ Bangla & English Support')}
           </p>
 
           {/* Stats */}
@@ -184,7 +116,7 @@ export default function HomePage() {
                   locale === "bn" ? "font-bengali" : ""
                 }`}
               >
-                {locale === "bn" ? "ব্যবহারকারী" : "Users"}
+                {t('stats.users', 'Users')}
               </div>
             </div>
             <div>
@@ -194,7 +126,7 @@ export default function HomePage() {
                   locale === "bn" ? "font-bengali" : ""
                 }`}
               >
-                {locale === "bn" ? "রিজিউম তৈরি" : "Resumes Created"}
+                {t('stats.resumesCreated', 'Resumes Created')}
               </div>
             </div>
             <div>
@@ -204,7 +136,7 @@ export default function HomePage() {
                   locale === "bn" ? "font-bengali" : ""
                 }`}
               >
-                {locale === "bn" ? "টেমপ্লেট" : "Templates"}
+                {t('stats.templates', 'Templates')}
               </div>
             </div>
           </div>
@@ -243,18 +175,14 @@ export default function HomePage() {
                   locale === "bn" ? "font-bengali" : ""
                 }`}
               >
-                {t.features?.easyBuilder?.title ||
-                  (locale === "bn" ? "সহজ রিজিউম বিল্ডার" : "Easy Resume Builder")}
+                {t('features.easyBuilder.title', 'Easy Resume Builder')}
               </h3>
               <p
                 className={`text-muted-foreground ${
                   locale === "bn" ? "font-bengali" : ""
                 }`}
               >
-                {t.features?.easyBuilder?.description ||
-                  (locale === "bn"
-                    ? "আমাদের সহজ এডিটর দিয়ে পেশাদার রিজিউম তৈরি করুন। ডিজাইন দক্ষতার প্রয়োজন নেই।"
-                    : "Create professional resumes with our intuitive editor. No design skills needed.")}
+                {t('features.easyBuilder.description', 'Create professional resumes with our intuitive editor. No design skills needed.')}
               </p>
             </CardContent>
           </Card>
@@ -269,17 +197,14 @@ export default function HomePage() {
                   locale === "bn" ? "font-bengali" : ""
                 }`}
               >
-                {locale === "bn" ? "বাংলা ও ইংরেজি" : "Bangla & English"}
+                {t('features.multilingual.title', 'Bangla & English')}
               </h3>
               <p
                 className={`text-muted-foreground ${
                   locale === "bn" ? "font-bengali" : ""
                 }`}
               >
-                {t.features?.multilingual?.description ||
-                  (locale === "bn"
-                    ? "বাংলা এবং ইংরেজি উভয় ভাষায় সম্পূর্ণ সাপোর্ট। আপনার পছন্দের ভাষায় রিজিউম তৈরি করুন।"
-                    : "Full support for both Bangla and English. Create resumes in your preferred language.")}
+                {t('features.multilingual.description', 'Full support for both Bangla and English. Create resumes in your preferred language.')}
               </p>
             </CardContent>
           </Card>
@@ -294,18 +219,14 @@ export default function HomePage() {
                   locale === "bn" ? "font-bengali" : ""
                 }`}
               >
-                {t.features?.exportShare?.title ||
-                  (locale === "bn" ? "এক্সপোর্ট ও শেয়ার" : "Export & Share")}
+                {t('features.exportShare.title', 'Export & Share')}
               </h3>
               <p
                 className={`text-muted-foreground ${
                   locale === "bn" ? "font-bengali" : ""
                 }`}
               >
-                {t.features?.exportShare?.description ||
-                  (locale === "bn"
-                    ? "PDF হিসাবে ডাউনলোড করুন বা আপনার ইউনিক পোর্টফোলিও লিংক শেয়ার করুন।"
-                    : "Download as PDF or share your unique portfolio link. Get your own porichoy.me/username.")}
+                {t('features.exportShare.description', 'Download as PDF or share your unique portfolio link. Get your own porichoy.me/username.')}
               </p>
             </CardContent>
           </Card>
@@ -482,14 +403,12 @@ export default function HomePage() {
               locale === "bn" ? "font-bengali" : ""
             }`}
           >
-            {t.cta?.title ||
-              (locale === "bn" ? "আপনার রিজিউম তৈরি করতে প্রস্তুত?" : "Ready to Build Your Resume?")}
+            {t('cta.title', 'Ready to Build Your Resume?')}
           </h2>
           <p
             className={`text-lg mb-8 opacity-90 ${locale === "bn" ? "font-bengali" : ""}`}
           >
-            {t.cta?.subtitle ||
-              (locale === "bn" ? "আজই শুরু করুন - সম্পূর্ণ বিনামূল্যে" : "Start today - Completely free")}
+            {t('cta.subtitle', 'Start today - Completely free')}
           </p>
           {!user ? (
             <Link href="/auth/signup">
@@ -499,8 +418,7 @@ export default function HomePage() {
                 className="text-lg px-8 shadow-lg hover:shadow-xl"
               >
                 <Sparkles className="mr-2 h-5 w-5" />
-                {t.cta?.button ||
-                  (locale === "bn" ? "ফ্রি অ্যাকাউন্ট তৈরি করুন" : "Create Free Account")}
+                {t('cta.button', 'Create Free Account')}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
@@ -525,18 +443,20 @@ export default function HomePage() {
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <FileText className="h-6 w-6 text-primary" />
-                <span className="font-bold">Porichoy</span>
+                <Image
+                  src="/images/logos/text_logo.png"
+                  alt="Porichoy Logo"
+                  width={100}
+                  height={24}
+                  className="h-6 w-auto"
+                />
               </div>
               <p
                 className={`text-sm text-muted-foreground ${
                   locale === "bn" ? "font-bengali" : ""
                 }`}
               >
-                {t.footer?.description ||
-                  (locale === "bn"
-                    ? "বাংলাদেশী মানুষের জন্য পেশাদার রিজিউম বিল্ডার।"
-                    : "Professional resume builder for Bangladeshi people.")}
+                {t('footer.description', 'Professional resume builder for Bangladeshi people.')}
               </p>
             </div>
 
@@ -546,7 +466,7 @@ export default function HomePage() {
                   locale === "bn" ? "font-bengali" : ""
                 }`}
               >
-                {t.footer?.product || (locale === "bn" ? "প্রোডাক্ট" : "Product")}
+                {t('footer.product', 'Product')}
               </h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
@@ -554,7 +474,7 @@ export default function HomePage() {
                     href="/templates"
                     className="hover:text-primary"
                   >
-                    {t.footer?.templates || (locale === "bn" ? "টেমপ্লেট" : "Templates")}
+                    {t('footer.templates', 'Templates')}
                   </Link>
                 </li>
                 <li>
@@ -574,7 +494,7 @@ export default function HomePage() {
                   locale === "bn" ? "font-bengali" : ""
                 }`}
               >
-                {t.footer?.company || (locale === "bn" ? "কোম্পানি" : "Company")}
+                {t('footer.company', 'Company')}
               </h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
@@ -582,7 +502,7 @@ export default function HomePage() {
                     href="/about"
                     className="hover:text-primary"
                   >
-                    {t.footer?.about || (locale === "bn" ? "আমাদের সম্পর্কে" : "About")}
+                    {t('footer.about', 'About')}
                   </Link>
                 </li>
                 <li>
@@ -590,7 +510,7 @@ export default function HomePage() {
                     href="/contact"
                     className="hover:text-primary"
                   >
-                    {t.footer?.contact || (locale === "bn" ? "যোগাযোগ" : "Contact")}
+                    {t('footer.contact', 'Contact')}
                   </Link>
                 </li>
               </ul>
@@ -602,7 +522,7 @@ export default function HomePage() {
                   locale === "bn" ? "font-bengali" : ""
                 }`}
               >
-                {t.footer?.legal || (locale === "bn" ? "আইনি" : "Legal")}
+                {t('footer.legal', 'Legal')}
               </h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
@@ -610,7 +530,7 @@ export default function HomePage() {
                     href="/privacy"
                     className="hover:text-primary"
                   >
-                    {t.footer?.privacy || (locale === "bn" ? "প্রাইভেসি" : "Privacy")}
+                    {t('footer.privacy', 'Privacy')}
                   </Link>
                 </li>
                 <li>
@@ -618,7 +538,7 @@ export default function HomePage() {
                     href="/terms"
                     className="hover:text-primary"
                   >
-                    {t.footer?.terms || (locale === "bn" ? "শর্তাবলী" : "Terms")}
+                    {t('footer.terms', 'Terms')}
                   </Link>
                 </li>
               </ul>
@@ -628,8 +548,7 @@ export default function HomePage() {
           <div className="border-t pt-8 text-center text-sm text-muted-foreground">
             <p className={locale === "bn" ? "font-bengali" : ""}>
               &copy; {new Date().getFullYear()} Porichoy.{" "}
-              {t.footer?.copyright ||
-                (locale === "bn" ? "সর্বস্বত্ব সংরক্ষিত।" : "All rights reserved.")}
+              {t('footer.copyright', 'All rights reserved.')}
               {locale === "bn"
                 ? "🇧🇩 বাংলাদেশের জন্য ভালোবাসা দিয়ে তৈরি"
                 : "🇧🇩 Made with love for Bangladesh"}

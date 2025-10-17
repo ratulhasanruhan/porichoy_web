@@ -1,264 +1,177 @@
-# Porichoy (পরিচয়) - Professional Resume Builder
+# Porichoy - Professional Resume Builder
 
-A full-stack multilingual web application for creating, customizing, and sharing professional resumes and portfolios. Built specifically for Bangladeshi users with full Bangla and English language support.
+A modern, multilingual resume builder application built with Next.js 14, designed specifically for Bangladeshi professionals. Supports both Bengali and English languages with beautiful typography and professional templates.
 
-## 🚀 Features
+## 🚀 Tech Stack
 
-### Core Functionality
-- **User Authentication** - Secure signup/login with email, Google OAuth, and magic links
-- **Resume Builder** - Intuitive editor with drag-and-drop sections
-- **Multiple Templates** - Professional templates in Bangla and English
-- **Public Profiles** - Unique portfolio links (porichoy.me/username)
-- **PDF Export** - High-quality PDF generation with Bangla font support
-- **Portfolio Showcase** - Display projects and work samples
-- **Privacy Controls** - Public/private profile visibility
-- **Analytics** - Track profile views and downloads
-- **Multilingual UI** - Complete Bangla (বাংলা) and English interfaces
-
-### Resume Sections
-- Personal Information (dual language)
-- Work Experience
-- Education
-- Skills with proficiency levels
-- Projects with tech stacks
-- Certifications
-- Languages
-- Contact Information
-
-## 🛠️ Tech Stack
-
-### Frontend
-- **Next.js 14** - App Router for SSR/SSG
-- **React 18** - UI components
-- **TypeScript** - Type safety
-- **Tailwind CSS** - Styling
-- **Zustand** - State management
-- **Radix UI** - Accessible components
-- **next-i18next** - Internationalization
-
-### Backend
-- **Supabase** - PostgreSQL database, authentication, storage
-- **Row-Level Security** - Data protection
-- **Real-time subscriptions** - Live updates
-
-### PDF Service
-- **Node.js + Express** - Microservice
-- **Puppeteer** - PDF generation
-- **Docker** - Containerization
-- **Noto Sans Bengali** - Bangla font support
-
-## 📦 Installation
-
-### Prerequisites
-- Node.js 18+ 
-- npm or yarn
-- Supabase account
-- (Optional) Docker for PDF service
-
-### 1. Clone the Repository
-
-```bash
-git clone https://github.com/yourusername/porichoy-web.git
-cd porichoy-web
-```
-
-### 2. Install Dependencies
-
-```bash
-npm install
-```
-
-### 3. Environment Setup
-
-Copy the example environment file:
-
-```bash
-cp .env.local.example .env.local
-```
-
-Edit `.env.local` with your credentials:
-
-```env
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-NEXT_PUBLIC_SITE_NAME=Porichoy
-
-PDF_SERVICE_URL=http://localhost:3001
-PDF_SERVICE_API_KEY=your_pdf_service_api_key
-```
-
-### 4. Database Setup
-
-1. Create a new Supabase project
-2. Run the SQL schema from `supabase/schema.sql` in your Supabase SQL editor
-3. Enable Google OAuth (optional) in Supabase Authentication settings
-
-### 5. Run Development Server
-
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-### 6. PDF Service Setup (Optional)
-
-```bash
-cd pdf-service
-npm install
-cp .env.example .env
-# Edit .env with API_KEY
-npm run dev
-```
-
-Or using Docker:
-
-```bash
-cd pdf-service
-docker build -t porichoy-pdf-service .
-docker run -p 3001:3001 -e API_KEY=your_api_key porichoy-pdf-service
-```
+- **Framework**: Next.js 14 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **Database**: Supabase (PostgreSQL)
+- **Authentication**: Supabase Auth
+- **Internationalization**: Custom i18n system
+- **Fonts**: Li Ador Noirrit (Bengali), Inter (English)
+- **UI Components**: Custom components with shadcn/ui patterns
 
 ## 📁 Project Structure
 
 ```
-porichoy-web/
-├── app/                    # Next.js App Router
-│   ├── (public)/          # Public routes
-│   │   └── [username]/    # Public profile pages
-│   ├── auth/              # Authentication pages
-│   ├── dashboard/         # Protected dashboard
-│   │   ├── edit/          # Resume editor
-│   │   ├── portfolio/     # Portfolio management
-│   │   └── settings/      # User settings
-│   ├── templates/         # Template gallery
-│   └── api/               # API routes
-├── components/            # React components
-│   ├── ui/               # Reusable UI components
-│   ├── navigation/       # Navigation components
-│   └── providers/        # Context providers
-├── lib/                  # Utilities and helpers
-│   ├── supabase/        # Supabase clients
-│   ├── store/           # Zustand stores
-│   └── utils.ts         # Helper functions
-├── types/               # TypeScript types
-├── public/              # Static assets
-│   └── locales/        # i18n translation files
-├── supabase/           # Database schema
-└── pdf-service/        # PDF generation microservice
+porichoy_web/
+├── app/                          # Next.js App Router
+│   ├── auth/                     # Authentication pages
+│   ├── dashboard/                # User dashboard
+│   ├── templates/                # Resume templates
+│   ├── globals.css              # Global styles
+│   ├── fonts.css                # Bengali font definitions
+│   └── layout.tsx               # Root layout with SEO
+├── components/                   # React components
+│   ├── navigation/              # Navbar component
+│   ├── providers/               # Context providers
+│   └── ui/                      # Reusable UI components
+├── lib/                         # Utility libraries
+│   ├── hooks/                   # Custom React hooks
+│   ├── store/                   # Zustand state management
+│   ├── supabase/                # Database client
+│   └── i18n.ts                  # Internationalization
+├── public/                      # Static assets
+│   ├── images/                  # Logos, icons, backgrounds
+│   ├── fonts/                   # Bengali fonts (Li Ador Noirrit)
+│   ├── locales/                 # Translation files
+│   ├── manifest.json            # PWA manifest
+│   ├── robots.txt               # SEO robots file
+│   └── sitemap.xml              # SEO sitemap
+├── types/                       # TypeScript definitions
+└── supabase/                    # Database schema
 ```
 
-## 🔒 Database Schema
+## 🎨 Assets & Branding
+
+### Logo Files (in `public/images/`)
+- **Text Logo**: `logos/text_logo.png` - Used in navbar and footer
+- **Full Logo**: `logos/porichoy_with_bg.png` - Used for social sharing
+- **App Icon**: `icons/icon.png` - PWA and mobile app icon
+- **Favicon**: `icons/favicon.ico` - Browser tab icon
+
+### Bengali Fonts (in `public/fonts/`)
+- **Li Ador Noirrit** font family with 5 weights:
+  - ExtraLight (200), Light (300), Regular (400), SemiBold (600), Bold (700)
+- CSS classes: `.font-bengali`, `.font-bengali-bold`, etc.
+
+## 🌍 Internationalization
+
+- **Default Language**: Bengali (`bn`)
+- **Secondary Language**: English (`en`)
+- **Translation Files**: Located in `public/locales/bn/` and `public/locales/en/`
+- **Namespaces**: `common`, `dashboard`, `home`, `auth`, `editor`
+- **Font Support**: Custom Bengali fonts for authentic typography
+
+## 🔧 Key Features
+
+### Authentication & User Management
+- Supabase Auth integration
+- User profiles with locale preferences
+- Protected routes and middleware
+
+### Resume Builder
+- Multi-language resume creation
+- Professional templates
+- Real-time preview
+- PDF export functionality
+
+### SEO & Performance
+- Comprehensive meta tags
+- Open Graph and Twitter Cards
+- Structured data (JSON-LD)
+- PWA support with manifest
+- Optimized images and fonts
+
+### State Management
+- Zustand stores for auth and resume data
+- Persistent user preferences
+- Real-time language switching
+
+## 🗄️ Database Schema
 
 ### Tables
-- `users` - User profiles and authentication
-- `profiles` - Resume/CV data (JSONB)
-- `templates` - Resume templates
-- `portfolio_items` - Portfolio projects
-- `exports` - PDF export history
-- `profile_views` - Analytics tracking
+- **users**: User profiles and preferences
+- **profiles**: Resume data and metadata
+- **templates**: Resume templates
+- **portfolio_items**: Portfolio projects
+- **exports**: PDF generation tracking
+- **profile_views**: Analytics data
 
-See `supabase/schema.sql` for complete schema with RLS policies.
+## 🚀 Development
 
-## 🌐 i18n Support
+### Prerequisites
+- Node.js 18+
+- npm or yarn
+- Supabase account
 
-The application supports Bangla (বাংলা) and English throughout:
-
-- **Default Language**: Bangla (bn)
-- **Available Languages**: bn, en
-- **Translation Files**: `public/locales/{lang}/*.json`
-
-### Adding Translations
-
-1. Add new keys to `public/locales/bn/common.json`
-2. Add corresponding translations to `public/locales/en/common.json`
-3. Use in components: `t('key')`
-
-## 🚀 Deployment
-
-### Frontend (Vercel)
-
-1. Push code to GitHub
-2. Import project to Vercel
-3. Add environment variables
-4. Deploy
-
-### PDF Service (Docker)
-
-Deploy to Railway, Render, or Fly.io:
-
-```bash
-cd pdf-service
-flyctl launch
-flyctl deploy
+### Environment Variables
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 ```
 
-Set environment variables in your deployment platform.
+### Commands
+```bash
+npm install          # Install dependencies
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run start        # Start production server
+```
 
-## 📝 Usage
+## 📱 PWA Features
 
-### Creating a Resume
+- **Installable**: Can be installed on mobile devices
+- **Offline Ready**: Service worker for offline functionality
+- **App Shortcuts**: Quick access to create resume and templates
+- **Responsive**: Mobile-first design
 
-1. **Sign up** - Create an account with email or Google
-2. **Choose Username** - Pick a unique username for your profile URL
-3. **Edit Resume** - Fill in your information in the editor
-4. **Select Template** - Choose a template that fits your style
-5. **Make Public** - Toggle visibility in settings
-6. **Share** - Share your link: `porichoy.me/username`
+## 🔍 SEO Configuration
 
-### Exporting PDF
+- **Primary Language**: Bengali (Bangladesh)
+- **Meta Tags**: Comprehensive SEO metadata
+- **Structured Data**: WebApplication schema
+- **Sitemap**: XML sitemap for search engines
+- **Robots.txt**: Proper crawling instructions
 
-1. Go to your profile page
-2. Click "Download PDF"
-3. PDF is generated with Bangla font support
-4. Save or share the PDF
+## 🎯 Target Audience
+
+- **Primary**: Bangladeshi professionals
+- **Languages**: Bengali (default), English
+- **Use Cases**: Job applications, career development, portfolio building
+
+## 📊 Performance
+
+- **Font Loading**: Optimized with font-display: swap
+- **Image Optimization**: Next.js Image component
+- **Code Splitting**: Automatic route-based splitting
+- **Caching**: Static asset caching
 
 ## 🔐 Security
 
-- **Row-Level Security (RLS)** on all tables
-- **Authentication required** for sensitive operations
-- **Input validation** on forms
-- **SQL injection protection** via Supabase
-- **XSS prevention** via React
-- **HTTPS only** in production
+- **Authentication**: Supabase Auth with RLS
+- **Data Protection**: Row-level security policies
+- **Input Validation**: TypeScript and runtime validation
+- **HTTPS**: Secure connections
 
-## 🤝 Contributing
+## 🌐 Deployment
 
-Contributions are welcome! Please:
+- **Platform**: Vercel (recommended)
+- **Database**: Supabase (hosted)
+- **CDN**: Automatic with Vercel
+- **Environment**: Production-ready configuration
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
+## 📝 Notes for AI Agents
 
-## 📄 License
+- **Default Language**: Bengali is the primary language
+- **Font System**: Custom Bengali fonts are loaded via CSS
+- **State Management**: Uses Zustand for client-side state
+- **Database**: Supabase with TypeScript types
+- **Styling**: Tailwind CSS with custom Bengali font classes
+- **SEO**: Comprehensive meta tags and structured data
+- **PWA**: Full progressive web app capabilities
 
-This project is licensed under the MIT License.
-
-## 🙏 Acknowledgments
-
-- **Noto Sans Bengali** - Google Fonts
-- **Supabase** - Backend infrastructure
-- **Vercel** - Frontend hosting
-- **shadcn/ui** - UI components
-
-## 📞 Support
-
-For support, email support@porichoy.me or open an issue on GitHub.
-
-## 🗺️ Roadmap
-
-- [ ] AI-powered resume suggestions
-- [ ] ATS optimization scoring
-- [ ] Resume analytics dashboard
-- [ ] Custom domain support
-- [ ] Team collaboration features
-- [ ] Mobile app (React Native)
-
----
-
-Made with ❤️ for Bangladesh 🇧🇩
-
+This application is designed to serve the Bangladeshi professional community with a focus on Bengali language support and cultural relevance.

@@ -8,13 +8,17 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useAuthStore } from '@/lib/store/useAuthStore'
 import { useSupabase } from '@/components/providers/SupabaseProvider'
+import { useTranslations } from '@/lib/hooks/useTranslations'
+import { setLocale } from '@/lib/i18n'
 import { Save, Loader2, Eye, EyeOff } from 'lucide-react'
 import { isValidUsername, getPublicProfileUrl } from '@/lib/utils'
+import type { Database } from '@/types/database'
 
 export default function SettingsPage() {
   const router = useRouter()
   const { user, profile, setProfile } = useAuthStore()
   const { supabase } = useSupabase()
+  const { t } = useTranslations({ namespace: 'common' })
   
   const [formData, setFormData] = useState({
     name: '',
@@ -56,6 +60,11 @@ export default function SettingsPage() {
         setUsernameError('')
       }
     }
+    
+    // Handle language change immediately
+    if (name === 'locale') {
+      setLocale(value as 'bn' | 'en')
+    }
   }
 
   const checkUsernameAvailability = async (username: string): Promise<boolean> => {
@@ -94,24 +103,30 @@ export default function SettingsPage() {
       }
 
       // Update user profile
+      const updateData: Database['public']['Tables']['users']['Update'] = {
+        name: formData.name,
+        username: formData.username,
+        locale: formData.locale,
+        is_public: formData.is_public,
+        updated_at: new Date().toISOString(),
+      }
+      
       const { error: updateError } = await (supabase as any)
         .from('users')
-        .update({
-          name: formData.name,
-          username: formData.username,
-          locale: formData.locale,
-          is_public: formData.is_public,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', user?.id)
+        .update(updateData)
+        .eq('id', user?.id || '')
 
       if (updateError) throw updateError
 
       // Update profiles visibility
+      const profilesUpdateData: Database['public']['Tables']['profiles']['Update'] = {
+        is_public: formData.is_public
+      }
+      
       const { error: profilesError } = await (supabase as any)
         .from('profiles')
-        .update({ is_public: formData.is_public })
-        .eq('user_id', user?.id)
+        .update(profilesUpdateData)
+        .eq('user_id', user?.id || '')
 
       if (profilesError) throw profilesError
 
@@ -206,7 +221,7 @@ export default function SettingsPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="locale">Preferred Language</Label>
+              <Label htmlFor="locale">{t('language', 'Language')}</Label>
               <select
                 id="locale"
                 name="locale"
@@ -214,8 +229,8 @@ export default function SettingsPage() {
                 onChange={handleChange}
                 className="w-full px-3 py-2 rounded-md border border-input bg-background"
               >
-                <option value="bn">বাংলা (Bangla)</option>
-                <option value="en">English</option>
+                <option value="bn">{t('bangla', 'বাংলা (Bangla)')}</option>
+                <option value="en">{t('english', 'English')}</option>
               </select>
             </div>
           </CardContent>

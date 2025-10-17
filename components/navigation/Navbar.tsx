@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAuthStore } from "@/lib/store/useAuthStore";
 import { useSupabase } from "@/components/providers/SupabaseProvider";
+import { useTranslations } from "@/lib/hooks/useTranslations";
 import {
   FileText,
   LogOut,
@@ -24,24 +25,27 @@ import {
   Edit3,
   ExternalLink,
 } from "lucide-react";
+import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import { getInitials } from "@/lib/utils";
+import type { Database } from "@/types/database";
 
 export function Navbar() {
   const router = useRouter();
   const { user, profile, setProfile } = useAuthStore();
   const { supabase } = useSupabase();
+  const { locale, setLocale } = useTranslations({ namespace: 'common' });
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [langMenuOpen, setLangMenuOpen] = useState(false);
-  const [currentLocale, setCurrentLocale] = useState("bn");
   const langMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Load locale from profile or localStorage
-    const locale =
-      profile?.locale || localStorage.getItem("preferredLocale") || "bn";
-    setCurrentLocale(locale);
-  }, [profile]);
+    // Only sync with user profile locale on initial load, not on every change
+    // Only run on client side to prevent hydration issues
+    if (typeof window !== 'undefined' && profile?.locale && profile.locale !== locale && !localStorage.getItem('preferredLocale')) {
+      setLocale(profile.locale);
+    }
+  }, [profile?.locale, locale, setLocale]);
 
   // Close language menu when clicking outside
   useEffect(() => {
@@ -73,41 +77,42 @@ export function Navbar() {
   };
 
   const handleLanguageChange = async (newLocale: "bn" | "en") => {
-    if (!user) {
-      // For non-logged in users, store preference in localStorage
-      if (typeof window !== 'undefined') {
-        localStorage.setItem("preferredLocale", newLocale);
-      }
-      setCurrentLocale(newLocale);
-      if (typeof window !== 'undefined') {
-        window.location.reload();
-      }
-      return;
-    }
+    // Update locale immediately for instant UI response
+    setLocale(newLocale);
 
-    try {
-      const { error } = await (supabase as any)
-        .from("users")
-        .update({ locale: newLocale })
-        .eq("id", user.id);
+    // Update user profile in background (non-blocking)
+    if (user) {
+      try {
+        if (!profile) {
+          const userData: Database['public']['Tables']['users']['Insert'] = {
+            id: user.id,
+            username: user.email?.split('@')[0] || 'user',
+            name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+            email: user.email || '',
+            locale: newLocale,
+            is_public: true,
+          }
+          
+          await (supabase as any)
+            .from("users")
+            .upsert(userData);
+        } else {
+          const updateData: Database['public']['Tables']['users']['Update'] = {
+            locale: newLocale
+          }
+          
+          await (supabase as any)
+            .from("users")
+            .update(updateData)
+            .eq("id", user.id);
 
-      if (error) {
-        console.error("Language change error:", error);
-        return;
+          // Update local profile state
+          setProfile({ ...profile, locale: newLocale });
+        }
+      } catch (error) {
+        // Silent fail - language change still works even if profile update fails
+        console.error("Background profile update failed:", error);
       }
-
-      // Update local state
-      if (profile) {
-        setProfile({ ...profile, locale: newLocale });
-      }
-      setCurrentLocale(newLocale);
-
-      // Reload to apply changes
-      if (typeof window !== 'undefined') {
-        window.location.reload();
-      }
-    } catch (error) {
-      console.error("Error changing language:", error);
     }
   };
 
@@ -117,13 +122,14 @@ export function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <FileText className="h-6 w-6 text-primary" />
-            <div>
-              <h1 className="text-lg font-bold">Porichoy</h1>
-              <p className="text-xs text-muted-foreground font-bengali leading-none">
-                পরিচয়
-              </p>
-            </div>
+            <Image
+              src="/images/logos/text_logo.png"
+              alt="Porichoy - Professional Resume Builder"
+              width={180}
+              height={40}
+              className="h-16 w-auto"
+              priority
+            />
           </Link>
 
           {/* Desktop Navigation */}
@@ -142,7 +148,7 @@ export function Navbar() {
                 className="flex items-center gap-2 text-sm hover:text-primary transition"
               >
                 <Globe className="h-4 w-4" />
-                <span>{currentLocale === "bn" ? "বাংলা" : "English"}</span>
+                <span>{locale === "bn" ? "বাংলা" : "English"}</span>
               </button>
               {langMenuOpen && (
                 <div className="absolute right-0 mt-2 w-32 bg-white dark:bg-gray-800 rounded-md shadow-lg border z-50">
@@ -151,8 +157,8 @@ export function Navbar() {
                       handleLanguageChange("bn");
                       setLangMenuOpen(false);
                     }}
-                    className={`block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 font-bengali ${
-                      currentLocale === "bn" ? "bg-gray-100 dark:bg-gray-700" : ""
+                    className={`block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 font-bengali transition-colors ${
+                      locale === "bn" ? "bg-gray-100 dark:bg-gray-700" : ""
                     }`}
                   >
                     বাংলা
@@ -162,8 +168,8 @@ export function Navbar() {
                       handleLanguageChange("en");
                       setLangMenuOpen(false);
                     }}
-                    className={`block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 ${
-                      currentLocale === "en" ? "bg-gray-100 dark:bg-gray-700" : ""
+                    className={`block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
+                      locale === "en" ? "bg-gray-100 dark:bg-gray-700" : ""
                     }`}
                   >
                     English
@@ -289,10 +295,10 @@ export function Navbar() {
                     handleLanguageChange("bn");
                     setMobileMenuOpen(false);
                   }}
-                  className={`flex-1 px-3 py-2 text-sm rounded ${
-                    currentLocale === "bn"
+                  className={`flex-1 px-3 py-2 text-sm rounded transition-colors ${
+                    locale === "bn"
                       ? "bg-primary text-primary-foreground"
-                      : "bg-gray-100 dark:bg-gray-800"
+                      : "bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"
                   } font-bengali`}
                 >
                   বাংলা
@@ -302,10 +308,10 @@ export function Navbar() {
                     handleLanguageChange("en");
                     setMobileMenuOpen(false);
                   }}
-                  className={`flex-1 px-3 py-2 text-sm rounded ${
-                    currentLocale === "en"
+                  className={`flex-1 px-3 py-2 text-sm rounded transition-colors ${
+                    locale === "en"
                       ? "bg-primary text-primary-foreground"
-                      : "bg-gray-100 dark:bg-gray-800"
+                      : "bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"
                   }`}
                 >
                   English

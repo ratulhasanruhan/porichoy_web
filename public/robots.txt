@@ -1,0 +1,30 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://porichoy.me/sitemap.xml
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1
+
+# Allow all search engines to index the site
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+# Block access to admin and private areas
+Disallow: /api/
+Disallow: /dashboard/edit/
+Disallow: /_next/
+Disallow: /admin/
+
+# Allow access to public pages
+Allow: /
+Allow: /templates/
+Allow: /auth/
+Allow: /assets/

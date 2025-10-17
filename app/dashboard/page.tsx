@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useAuthStore } from '@/lib/store/useAuthStore'
 import { useSupabase } from '@/components/providers/SupabaseProvider'
+import { useTranslations } from '@/lib/hooks/useTranslations'
 import { Plus, FileText, Eye, Edit, Trash2, ExternalLink, Loader2 } from 'lucide-react'
 import type { Database } from '@/types/database'
 import { formatDate, formatNumber } from '@/lib/utils'
@@ -18,6 +19,7 @@ export default function DashboardPage() {
   const router = useRouter()
   const { user, profile: userProfile } = useAuthStore()
   const { supabase } = useSupabase()
+  const { t, locale } = useTranslations({ namespace: 'dashboard' })
   const [profiles, setProfiles] = useState<Profile[]>([])
   const [loading, setLoading] = useState(true)
   const [creating, setCreating] = useState(false)
@@ -69,7 +71,7 @@ export default function DashboardPage() {
         return
       }
 
-      const totalViews = data?.reduce((sum: number, p: any) => sum + (p.views_count || 0), 0) || 0
+      const totalViews = data?.reduce((sum: number, p: { views_count?: number }) => sum + (p.views_count || 0), 0) || 0
       setStats({
         totalViews,
         totalProfiles: data?.length || 0,
@@ -99,29 +101,53 @@ export default function DashboardPage() {
     try {
       setCreating(true)
 
-       // Create a new resume with properly typed data
-       const newResume: any = {
-         user_id: user.id,
-         title: `Resume ${profiles.length + 1}`,
-         summary: '',
-         data: {
-           personalInfo: {
-             fullName: userProfile?.name || '',
-           },
-           experience: [],
-           education: [],
-           skills: [],
-           projects: [],
-           certifications: [],
-           languages: [],
-           contact: {
-             email: user?.email || '',
-           },
-         },
-         is_public: false,
-       }
+      // First, ensure the user exists in public.users table
+      if (!userProfile) {
+        // Create user profile if it doesn't exist
+        const userData: Database['public']['Tables']['users']['Insert'] = {
+          id: user.id,
+          username: user.email?.split('@')[0] || 'user',
+          name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+          email: user.email || '',
+          locale: 'bn',
+          is_public: true,
+        }
+        
+        const { error: userError } = await (supabase as any)
+          .from('users')
+          .upsert(userData)
 
-      const { data, error } = await supabase
+        if (userError) {
+          console.error('Error creating user profile:', userError)
+          alert('Failed to create user profile. Please try again.')
+          setCreating(false)
+          return
+        }
+      }
+
+      // Create a new resume with properly typed data
+      const newResume: Database['public']['Tables']['profiles']['Insert'] = {
+        user_id: user.id,
+        title: `Resume ${profiles.length + 1}`,
+        summary: '',
+        data: {
+          personalInfo: {
+            fullName: userProfile?.name || user.user_metadata?.full_name || user.email?.split('@')[0] || '',
+          },
+          experience: [],
+          education: [],
+          skills: [],
+          projects: [],
+          certifications: [],
+          languages: [],
+          contact: {
+            email: user?.email || '',
+          },
+        },
+        is_public: false,
+      }
+
+      const { data, error } = await (supabase as any)
         .from('profiles')
         .insert(newResume)
         .select()
@@ -136,7 +162,7 @@ export default function DashboardPage() {
 
       if (data) {
         // Redirect to the edit page for the new resume
-        router.push(`/dashboard/edit/${(data as any).id}`)
+        router.push(`/dashboard/edit/${(data as { id: string }).id}`)
       } else {
         alert('Failed to create resume. Please try again.')
         setCreating(false)
@@ -186,7 +212,7 @@ export default function DashboardPage() {
     )
   }
 
-  const locale = userProfile?.locale || 'en'
+  // Use the locale from the i18n hook instead of userProfile
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -194,22 +220,22 @@ export default function DashboardPage() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className={`text-3xl font-bold mb-2 ${locale === 'bn' ? 'font-bengali' : ''}`}>
-            {locale === 'bn' ? 'ড্যাশবোর্ড' : 'Dashboard'}
+            {t('title', 'Dashboard')}
           </h1>
           <p className={`text-muted-foreground ${locale === 'bn' ? 'font-bengali' : ''}`}>
-            {locale === 'bn' ? 'স্বাগতম' : 'Welcome back'}, {userProfile?.name || 'User'}!
+            {t('welcome', 'Welcome back')}, {userProfile?.name || 'User'}!
           </p>
         </div>
         <Button onClick={handleCreateResume} disabled={creating}>
           {creating ? (
             <>
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              {locale === 'bn' ? 'তৈরি হচ্ছে...' : 'Creating...'}
+              {t('creating', 'Creating...')}
             </>
           ) : (
             <>
               <Plus className="h-4 w-4 mr-2" />
-              {locale === 'bn' ? 'নতুন রিজিউম তৈরি করুন' : 'Create New Resume'}
+              {t('createNewResume', 'Create New Resume')}
             </>
           )}
         </Button>
@@ -220,7 +246,7 @@ export default function DashboardPage() {
         <Card>
           <CardHeader className="pb-3">
             <CardDescription className={locale === 'bn' ? 'font-bengali' : ''}>
-              {locale === 'bn' ? 'মোট রিজিউম' : 'Total Resumes'}
+              {t('stats.totalResumes', 'Total Resumes')}
             </CardDescription>
             <CardTitle className="text-3xl">{stats.totalProfiles}</CardTitle>
           </CardHeader>
@@ -229,7 +255,7 @@ export default function DashboardPage() {
         <Card>
           <CardHeader className="pb-3">
             <CardDescription className={locale === 'bn' ? 'font-bengali' : ''}>
-              {locale === 'bn' ? 'মোট প্রোফাইল ভিউ' : 'Total Profile Views'}
+              {t('stats.totalViews', 'Total Profile Views')}
             </CardDescription>
             <CardTitle className="text-3xl">
               {formatNumber(stats.totalViews, locale)}
@@ -240,7 +266,7 @@ export default function DashboardPage() {
         <Card>
           <CardHeader className="pb-3">
             <CardDescription className={locale === 'bn' ? 'font-bengali' : ''}>
-              {locale === 'bn' ? 'আপনার প্রোফাইল' : 'Your Profile'}
+              {t('stats.yourProfile', 'Your Profile')}
             </CardDescription>
             <CardTitle className="text-lg truncate">
               porichoy.me/{userProfile?.username || 'username'}
@@ -251,13 +277,13 @@ export default function DashboardPage() {
               <Link href={`/${userProfile.username}`}>
                 <Button variant="outline" size="sm" className="w-full">
                   <ExternalLink className="h-4 w-4 mr-2" />
-                  {locale === 'bn' ? 'পাবলিক প্রোফাইল দেখুন' : 'View Public Profile'}
+                  {t('resume.viewProfile', 'View Public Profile')}
                 </Button>
               </Link>
             ) : (
               <Link href="/dashboard/settings">
                 <Button variant="outline" size="sm" className="w-full">
-                  {locale === 'bn' ? 'ইউজারনেম সেট করুন' : 'Set Username'}
+                  {t('resume.setUsername', 'Set Username')}
                 </Button>
               </Link>
             )}
@@ -268,7 +294,7 @@ export default function DashboardPage() {
       {/* Resumes List */}
       <div>
         <h2 className={`text-2xl font-semibold mb-4 ${locale === 'bn' ? 'font-bengali' : ''}`}>
-          {locale === 'bn' ? 'আমার রিজিউম' : 'My Resumes'}
+          {t('myResumes', 'My Resumes')}
         </h2>
 
         {profiles.length === 0 ? (
@@ -276,23 +302,21 @@ export default function DashboardPage() {
             <CardContent className="flex flex-col items-center justify-center py-16">
               <FileText className="h-16 w-16 text-muted-foreground mb-4" />
               <h3 className={`text-xl font-semibold mb-2 ${locale === 'bn' ? 'font-bengali' : ''}`}>
-                {locale === 'bn' ? 'এখনো কোনো রিজিউম নেই' : 'No Resumes Yet'}
+                {t('noResumesYet', 'No Resumes Yet')}
               </h3>
               <p className={`text-muted-foreground mb-6 text-center max-w-md ${locale === 'bn' ? 'font-bengali' : ''}`}>
-                {locale === 'bn'
-                  ? 'আপনার প্রথম পেশাদার রিজিউম তৈরি করে শুরু করুন। এটি মাত্র কয়েক মিনিট সময় নেয়!'
-                  : 'Get started by creating your first professional resume. It only takes a few minutes!'}
+                {t('noResumesDescription', 'Get started by creating your first professional resume. It only takes a few minutes!')}
               </p>
               <Button onClick={handleCreateResume} disabled={creating}>
                 {creating ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    {locale === 'bn' ? 'তৈরি হচ্ছে...' : 'Creating...'}
+                    {t('creating', 'Creating...')}
                   </>
                 ) : (
                   <>
                     <Plus className="h-4 w-4 mr-2" />
-                    {locale === 'bn' ? 'আপনার প্রথম রিজিউম তৈরি করুন' : 'Create Your First Resume'}
+                    {t('createFirstResume', 'Create Your First Resume')}
                   </>
                 )}
               </Button>

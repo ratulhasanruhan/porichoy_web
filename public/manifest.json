@@ -1,0 +1,63 @@
+{
+  "name": "Porichoy - Professional Resume Builder",
+  "short_name": "Porichoy",
+  "description": "Create your professional resume and portfolio in Bangla and English. Free resume builder for Bangladeshi professionals.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3B82F6",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "bn",
+  "dir": "ltr",
+  "categories": ["productivity", "business", "education"],
+  "icons": [
+    {
+      "src": "/images/icons/icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/images/icons/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/images/logos/porichoy_with_bg.png",
+      "sizes": "1200x630",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Porichoy Resume Builder"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Create Resume",
+      "short_name": "Create",
+      "description": "Start creating a new resume",
+      "url": "/dashboard/edit",
+      "icons": [
+        {
+          "src": "/images/icons/icon.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Templates",
+      "short_name": "Templates",
+      "description": "Browse resume templates",
+      "url": "/templates",
+      "icons": [
+        {
+          "src": "/images/icons/icon.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ]
+}

@@ -4,23 +4,39 @@
     "title1": "Create Your",
     "title2": "Professional",
     "title3": "Resume",
-    "subtitle": "Build Your Professional Identity | Build, Customize & Share Your Career Story",
+    "subtitle": "Build, Customize & Share Your Career Story",
     "startBuilding": "Start Building Free",
     "viewTemplates": "View Templates",
-    "noCreditCard": "No credit card required • Free forever • Bangla & English Support"
+    "noCreditCard": "✓ No credit card required • ✓ Free forever • ✓ Bangla & English Support"
   },
   "features": {
     "easyBuilder": {
       "title": "Easy Resume Builder",
-      "description": "Create professional resumes with our intuitive drag-and-drop editor. No design skills needed."
+      "description": "Create professional resumes with our intuitive editor. No design skills needed."
     },
     "multilingual": {
-      "title": "বাংলা & English",
+      "title": "Bangla & English",
       "description": "Full support for both Bangla and English. Create resumes in your preferred language."
     },
     "exportShare": {
       "title": "Export & Share",
       "description": "Download as PDF or share your unique portfolio link. Get your own porichoy.me/username."
+    }
+  },
+  "howItWorks": {
+    "title": "How It Works",
+    "subtitle": "Create your professional resume in just three simple steps",
+    "step1": {
+      "title": "Sign Up",
+      "description": "Create a free account and choose your unique username"
+    },
+    "step2": {
+      "title": "Build Resume",
+      "description": "Fill in your information and choose a template"
+    },
+    "step3": {
+      "title": "Share",
+      "description": "Download PDF or share your portfolio link"
     }
   },
   "cta": {
@@ -32,16 +48,23 @@
     "description": "Professional resume builder for Bangladeshi people.",
     "product": "Product",
     "company": "Company",
-    "legal": "Legal",
     "templates": "Templates",
-    "features": "Features",
-    "pricing": "Pricing",
     "about": "About",
     "contact": "Contact",
-    "blog": "Blog",
+    "legal": "Legal",
     "privacy": "Privacy",
     "terms": "Terms",
-    "copyright": "All rights reserved."
+    "copyright": "All rights reserved.",
+    "madeWithLove": "🇧🇩 Made with love for Bangladesh"
+  },
+  "stats": {
+    "users": "Users",
+    "resumesCreated": "Resumes Created",
+    "templates": "Templates"
+  },
+  "navigation": {
+    "templates": "Templates",
+    "dashboard": "Go to Dashboard",
+    "createResume": "Create Resume"
   }
 }
-
